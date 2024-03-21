@@ -1,0 +1,274 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+struct Node {
+    string npm;
+    string nama;
+    string jurusan;
+    int semester;
+    int sks;
+    float ipk;
+    Node* next;
+    Node* prev;
+};
+
+class LinkedList {
+private:
+    Node* head;
+    Node* tail;
+
+public:
+    LinkedList() {
+        head = NULL;
+        tail = NULL;
+    }
+
+    void tambah_mahasiswa_depan(string npm, string nama, string jurusan, int semester, int sks, float ipk) {
+        Node* new_node = new Node();
+        new_node->npm = npm;
+        new_node->nama = nama;
+        new_node->jurusan = jurusan;
+        new_node->semester = semester;
+        new_node->sks = sks;
+        new_node->ipk = ipk;
+        new_node->next = head;
+        new_node->prev = NULL;
+
+        if (head != NULL)
+            head->prev = new_node;
+        else
+            tail = new_node;
+
+        head = new_node;
+    }
+
+    void tambah_mahasiswa_belakang(string npm, string nama, string jurusan, int semester, int sks, float ipk) {
+        Node* new_node = new Node();
+        new_node->npm = npm;
+        new_node->nama = nama;
+        new_node->jurusan = jurusan;
+        new_node->semester = semester;
+        new_node->sks = sks;
+        new_node->ipk = ipk;
+        new_node->next = NULL;
+        new_node->prev = tail;
+
+        if (tail != NULL)
+            tail->next = new_node;
+        else
+            head = new_node;
+
+        tail = new_node;
+    }
+
+    void hapus_mahasiswa_depan() {
+        if (head == NULL) {
+            cout << "Linked list kosong." << endl;
+            return;
+        }
+
+        Node* temp = head;
+        head = head->next;
+
+        if (head != NULL)
+            head->prev = NULL;
+        else
+            tail = NULL;
+
+        delete temp;
+    }
+
+    void hapus_mahasiswa_belakang() {
+        if (head == NULL) {
+            cout << "Linked list kosong." << endl;
+            return;
+        }
+
+        Node* temp = tail;
+        tail = tail->prev;
+
+        if (tail != NULL)
+            tail->next = NULL;
+        else
+            head = NULL;
+
+        delete temp;
+    }
+
+    int hitung_total_sks() {
+        int total_sks = 0;
+        Node* current = head;
+        while (current != NULL) {
+            total_sks += current->sks;
+            current = current->next;
+        }
+        return total_sks;
+    }
+
+    int hitung_total_sks_mahasiswa(string npm) {
+        int total_sks = 0;
+        Node* current = head;
+        while (current != NULL) {
+            if (current->npm == npm) {
+                total_sks += current->sks;
+            }
+            current = current->next;
+        }
+        return total_sks;
+    }
+
+    int hitung_total_sks_seluruh_mahasiswa() {
+        int total_sks = 0;
+        Node* current = head;
+        while (current != NULL) {
+            total_sks += current->sks;
+            current = current->next;
+        }
+        return total_sks;
+    }
+
+    void tampil_data() {
+        Node* current = head;
+        while (current != NULL) {
+            cout << "NPM: " << current->npm << endl;
+            cout << "Nama Mahasiswa: " << current->nama << endl;
+            cout << "Jurusan: " << current->jurusan << endl;
+            cout << "Semester: " << current->semester << endl;
+            cout << "SKS yang diambil: " << current->sks << endl;
+            cout << "IPK: " << current->ipk << endl;
+            cout << "------------------------" << endl;
+            current = current->next;
+        }
+    }
+
+    void hapus_data(string npm) {
+        Node* current = head;
+        while (current != NULL) {
+            if (current->npm == npm) {
+                if (current == head)
+                    hapus_mahasiswa_depan();
+                else if (current == tail)
+                    hapus_mahasiswa_belakang();
+                else {
+                    current->prev->next = current->next;
+                    current->next->prev = current->prev;
+                    delete current;
+                }
+                cout << "Data mahasiswa dengan NPM " << npm << " berhasil dihapus." << endl;
+                return;
+            }
+            current = current->next;
+        }
+        cout << "Mahasiswa dengan NPM " << npm << " tidak ditemukan." << endl;
+    }
+
+    void tampil_menu() {
+        cout << "============================================================================================" << endl;
+        cout << "| No. |      Operasi           |                  Deskripsi                                |" << endl;
+        cout << "============================================================================================" << endl;
+        cout << "|  1  |  Tambah Data Depan     |   Menambah data mahasiswa dari depan                      |" << endl;
+        cout << "|-----|------------------------|-----------------------------------------------------------|" << endl;
+        cout << "|  2  |  Tambah Data Belakang  |   Menambah data mahasiswa dari belakang                   |" << endl;
+        cout << "|-----|------------------------|-----------------------------------------------------------|" << endl;
+        cout << "|  3  |  Hapus Data Depan      |   Menghapus data mahasiswa dari depan                     |" << endl;
+        cout << "|-----|------------------------|-----------------------------------------------------------|" << endl;
+        cout << "|  4  |  Hapus Data Belakang   |   Menghapus data mahasiswa dari belakang                  |" << endl;
+        cout << "|-----|------------------------|-----------------------------------------------------------|" << endl;
+        cout << "|  5  |  Hitung Total SKS      |   Menghitung total SKS mahasiswa berdasarkan              |" << endl;
+        cout << "|     |  Mahasiswa             |   NPM                                                     |" << endl;
+        cout << "|-----|------------------------|-----------------------------------------------------------|" << endl;
+        cout << "|  6  |  Hitung Total SKS      |   Menghitung total SKS yang diambil                       |" << endl;
+        cout << "|     |                        |   oleh seluruh mahasiswa                                  |" << endl;
+        cout << "|-----|------------------------|-----------------------------------------------------------|" << endl;
+        cout << "|  7  |  Tampil Data           |   Menampilkan data mahasiswa dari linked                  |" << endl;
+        cout << "|     |  Mahasiswa             |   list                                                    |" << endl;
+        cout << "|-----|------------------------|-----------------------------------------------------------|" << endl;
+        cout << "|  8  |  Hapus Data Mahasiswa  |   Menghapus data mahasiswa berdasarkan NPM yang diberikan |" << endl;
+        cout << "|-----|------------------------|-----------------------------------------------------------|" << endl;
+        cout << "|  9  |  Keluar                |   Keluar dari program.                                    |" << endl;
+        cout << "============================================================================================" << endl;
+    }
+
+};
+
+int main() {
+    LinkedList linked_list;
+    int choice;
+    string npm, nama, jurusan;
+    int semester, sks;
+    float ipk;
+
+    while (true) {
+        linked_list.tampil_menu();
+        cout << "Pilihan Anda: ";
+        cin >> choice;
+
+        switch (choice) {
+              case 1:
+                cout << "Masukkan NPM: ";
+                cin >> npm;
+                cout << "Masukkan Nama Mahasiswa: ";
+                cin.ignore(); // Untuk membersihkan buffer masukan sebelum menggunakan getline
+                getline(cin, nama);
+                cout << "Masukkan Jurusan: ";
+                getline(cin, jurusan);
+                cout << "Masukkan Semester: ";
+                cin >> semester;
+                cout << "Masukkan SKS: ";
+                cin >> sks;
+                cout << "Masukkan IPK: ";
+                cin >> ipk;
+                linked_list.tambah_mahasiswa_depan(npm, nama, jurusan, semester, sks, ipk);
+                break;
+
+             case 2:
+                cout << "Masukkan NPM: ";
+                cin >> npm;
+                cin.ignore(); // Membersihkan newline dari buffer masukan
+                cout << "Masukkan Nama Mahasiswa: ";
+                getline(cin, nama);
+                cout << "Masukkan Jurusan: ";
+                getline(cin, jurusan);
+                cout << "Masukkan Semester: ";
+                cin >> semester;
+                cout << "Masukkan SKS: ";
+                cin >> sks;
+                cout << "Masukkan IPK: ";
+                cin >> ipk;
+                linked_list.tambah_mahasiswa_belakang(npm, nama, jurusan, semester, sks, ipk);
+                break;
+
+            case 3:
+                linked_list.hapus_mahasiswa_depan();
+                break;
+            case 4:
+                linked_list.hapus_mahasiswa_belakang();
+                break;
+            case 5:
+                cout << "Masukkan NPM Mahasiswa: ";
+                cin >> npm;
+                cout << "Total SKS mahasiswa berdasarkan NPM " << npm << ": " << linked_list.hitung_total_sks_mahasiswa(npm) << endl;
+                break;
+            case 6:
+                cout << "Total SKS yang diambil oleh seluruh mahasiswa: " << linked_list.hitung_total_sks_seluruh_mahasiswa() << endl;
+                break;
+            case 7:
+                cout << "Data Mahasiswa:" << endl;
+                linked_list.tampil_data();
+                break;
+            case 8:
+                cout << "Masukkan NPM Mahasiswa yang Akan Dihapus: ";
+                cin >> npm;
+                linked_list.hapus_data(npm);
+                break;
+            case 9:
+                cout << "Program selesai." << endl;
+                exit(0);
+            default:
+                cout << "Pilihan tidak valid. Silakan coba lagi." << endl;
+        }
+    }
+
+    return 0;
+}       
